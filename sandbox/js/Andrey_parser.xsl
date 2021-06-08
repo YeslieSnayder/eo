@@ -7,7 +7,7 @@
     </xsl:template>
 
     <xsl:template name="object" match="program/objects/*">
-        <xsl:if test="@name">"<xsl:value-of select="@name"/>" : <xsl:call-template name="ValueTemplate"/></xsl:if>
+        <xsl:if test="((@name) and not (@level))">"<xsl:value-of select="@name"/>" : <xsl:call-template name="ValueTemplate"/></xsl:if>
     </xsl:template>
 
     <xsl:template name="ValueTemplate">
