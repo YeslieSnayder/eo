@@ -10,3 +10,9 @@
   false > f
 
   [a b] > cl
+    a > s
+
+[param...] > smclass
+  "abc" > q
+  123 > w
+  10.123 > e
