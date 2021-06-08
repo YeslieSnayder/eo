@@ -11,8 +11,13 @@
 
   [a b] > cl
     a > s
+    "test" > l
+    "new attr" > new
 
 [param...] > smclass
+  phi > @
+    "decorator" > dec
+
   "abc" > q
   123 > w
   10.123 > e
