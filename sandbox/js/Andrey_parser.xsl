@@ -3,7 +3,7 @@
     <xsl:output method="text"/>
     <xsl:template match="/">{
         <xsl:apply-templates select="program/objects/*"/>
-        }
+}
     </xsl:template>
 
     <xsl:template name="object" match="program/objects/*">
@@ -14,19 +14,17 @@
         <xsl:if test="o">{
             <xsl:for-each select="o">
                 <xsl:call-template name="object"/>
-            </xsl:for-each>},
+                <xsl:if test="position() != last()">,
+                </xsl:if></xsl:for-each>}
         </xsl:if>
         <xsl:if test="not(o)">
             <xsl:if test="text()">
                 <xsl:choose>
-                    <xsl:when test="@data = 'string'">"<xsl:value-of select="text()"/>",
-                    </xsl:when>
-                    <xsl:otherwise><xsl:value-of select="text()"/>,
-                    </xsl:otherwise>
+                    <xsl:when test="@data = 'string'">"<xsl:value-of select="text()"/>"</xsl:when>
+                    <xsl:otherwise><xsl:value-of select="text()"/></xsl:otherwise>
                 </xsl:choose>
             </xsl:if>
-            <xsl:if test="not(text())">{},
-            </xsl:if>
+            <xsl:if test="not(text())">{}</xsl:if>
         </xsl:if>
     </xsl:template>
 </xsl:stylesheet>
