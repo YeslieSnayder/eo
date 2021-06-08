@@ -15,7 +15,8 @@
             <xsl:for-each select="o">
                 <xsl:call-template name="object"/>
                 <xsl:if test="position() != last()">,
-                </xsl:if></xsl:for-each>}
+                </xsl:if>
+            </xsl:for-each>}
         </xsl:if>
         <xsl:if test="not(o)">
             <xsl:if test="text()">
