@@ -9,15 +9,17 @@
   true > t
   false > f
 
-  [a b] > cl
+  [a b] > obj
     a > s
     "test" > l
     "new attr" > new
+    [] > innerObj
+      "some text" > text
+      b > parentB
+      [] > innerInnerObj
+        10 > x
 
 [param...] > smclass
-  phi > @
-    "decorator" > dec
-
   "abc" > q
   123 > w
   10.123 > e

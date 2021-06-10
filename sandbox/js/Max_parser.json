@@ -14,12 +14,17 @@
             "a" : {},
             "b" : {},
             "s" : {},
-            },
+            "l" : "test",
+                    "new" : "new attr",
+                    },
         "smclass" : {
             "param" : {},
-            "q" : "abc",
+            "@" : {
+            },
+        "q" : "abc",
                     "w" : 123,
                     "e" : 10.123,
+                    "dec" : "decorator",
                     },
         
         }
