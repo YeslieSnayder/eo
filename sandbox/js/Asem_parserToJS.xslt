@@ -1,37 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="text"/>
-    <xsl:template match="/">{
+    <xsl:template match="/">
         <xsl:apply-templates select="program/objects"/>
-        }
     </xsl:template>
 
     <xsl:template match="objects">
         <xsl:for-each select="o">
             <xsl:if test="(not (@parent))">
                 <xsl:if test="position()>1">
-                    <xsl:text>,&#13;    </xsl:text>
+                    <xsl:text>&#13;</xsl:text>
                 </xsl:if>
-               <xsl:text>"</xsl:text>
-               <xsl:value-of select="@original-name"/>
-               <xsl:text>" : {&#13;    </xsl:text>
-               <xsl:call-template name="insideObjects"/>
-               <xsl:text>}</xsl:text>
+                <xsl:text>let </xsl:text>
+                <xsl:value-of select="@original-name"/>
+                <xsl:text> = {&#013;    </xsl:text>
+                <xsl:call-template name="insideObjects"/>
+                <xsl:text>}</xsl:text>
             </xsl:if>
         </xsl:for-each>
     </xsl:template>
 
     <xsl:template name="insideObjects">
         <xsl:for-each select="o">
-        <xsl:if test="@name and not (@level)">
-            <xsl:if test="position() > 1">
-                <xsl:text>,&#13;    </xsl:text>
+            <xsl:if test="@name and not (@level)">
+                <xsl:if test="position() > 1">
+                    <xsl:text>,&#13;    </xsl:text>
+                </xsl:if>
+                <xsl:text>"</xsl:text>
+                <xsl:value-of select="@name"/>
+                <xsl:text>" : </xsl:text>
+                <xsl:call-template name="valueTemplate"/>
             </xsl:if>
-            <xsl:text>"</xsl:text>
-            <xsl:value-of select="@name"/>
-            <xsl:text>" : </xsl:text>
-            <xsl:call-template name="valueTemplate"/>
-        </xsl:if>
         </xsl:for-each>
     </xsl:template>
 
@@ -55,7 +54,7 @@
                     <xsl:text>"</xsl:text>
                 </xsl:when>
                 <xsl:when test="not(text())">
-                    <xsl:text>{}</xsl:text>
+                    <xsl:text>null</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:value-of select="."/>
