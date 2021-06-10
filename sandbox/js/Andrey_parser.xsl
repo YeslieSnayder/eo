@@ -9,23 +9,25 @@
 
         <!-- Outer objects (main) -->
         <xsl:for-each select="o">
-            <xsl:text>"</xsl:text>
-            <xsl:value-of select="@original-name"/>
-            <xsl:text>" : {
+            <xsl:if test="not(@ancestors)">
+                <xsl:text>"</xsl:text>
+                <xsl:value-of select="@original-name"/>
+                <xsl:text>" : {
         </xsl:text>
 
-        <!-- Inner objects -->
-        <xsl:call-template name="inner_object"/>
+            <!-- Inner objects -->
+            <xsl:call-template name="inner_object"/>
 
-        <xsl:text>
+            <xsl:text>
     }</xsl:text><xsl:if test="position() != last()">,
     </xsl:if>
+            </xsl:if>
         </xsl:for-each>
     </xsl:template>
 
     <xsl:template name="inner_object">
         <xsl:for-each select="o">
-            <xsl:if test="(@name and not(@level))">
+            <xsl:if test="@name and not(@level)">
                 <xsl:if test="position() > 1">,
         </xsl:if>
                 <xsl:text>"</xsl:text>
@@ -40,11 +42,14 @@
 
         <!-- Inner object -->
         <xsl:if test="o">
-            <xsl:text>{</xsl:text>
-            <xsl:for-each select="o">
+            <xsl:text>{
+            </xsl:text>
+            <xsl:variable name="base_name" select="@base"/>
+            <xsl:for-each select="/program/objects/o[@name=$base_name]">
                 <xsl:call-template name="inner_object"/>
             </xsl:for-each>
-            <xsl:text>}</xsl:text>
+            <xsl:text>
+        }</xsl:text>
         </xsl:if>
 
         <!-- Primitive types -->

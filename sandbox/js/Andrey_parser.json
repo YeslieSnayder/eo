@@ -7,21 +7,25 @@
         "s" : "100000000000000000000000000000000000000000000",
         "t" : true,
         "f" : false,
-        "cl" : {}
-    },
-    "cl" : {
-        "a" : {},
+        "obj" : {
+            "a" : {},
         "b" : {},
         "s" : {},
         "l" : "test",
-        "new" : "new attr"
+        "new" : "new attr",
+        "innerObj" : {
+            "text" : "some text",
+        "parentB" : {},
+        "innerInnerObj" : {
+            "x" : 10
+        }
+        }
+        }
     },
     "smclass" : {
         "param" : {},
-        "@" : {},
         "q" : "abc",
         "w" : 123,
-        "e" : 10.123,
-        "dec" : "decorator"
+        "e" : 10.123
     }
 }

@@ -8,18 +8,18 @@
   "100000000000000000000000000000000000000000000" > s
   true > t
   false > f
-  'z' > charX
-  00-02-4F-1A-FF-01 > bytesX
 
-  [a b] > cl
+  [a b] > obj
     a > s
     "test" > l
     "new attr" > new
+    [] > innerObj
+      "some text" > text
+      b > parentB
+      [] > innerInnerObj
+        10 > x
 
 [param...] > smclass
-  phi > @
-    "decorator" > dec
-
   "abc" > q
   123 > w
   10.123 > e
