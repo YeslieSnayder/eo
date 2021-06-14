@@ -26,9 +26,8 @@
                 <xsl:if test="position() > 1">
                     <xsl:text>,&#13;    </xsl:text>
                 </xsl:if>
-                <xsl:text>"</xsl:text>
                 <xsl:value-of select="@name"/>
-                <xsl:text>" : </xsl:text>
+                <xsl:text> : </xsl:text>
                 <xsl:call-template name="valueTemplate"/>
             </xsl:if>
         </xsl:for-each>
