@@ -9,7 +9,6 @@
     <xsl:template match="/">
         <xsl:text>{</xsl:text>
         <xsl:value-of select="$line_break"/>
-        <xsl:value-of select="$tab"/>
         <xsl:apply-templates select="program/objects"/>
         <xsl:value-of select="$line_break"/>
         <xsl:text>}</xsl:text>
@@ -19,6 +18,11 @@
     <xsl:template name="object" match="program/objects">
         <xsl:for-each select="o">
             <xsl:if test="not(@ancestors)">
+                <xsl:if test="position() > 1">
+                    <xsl:text>,</xsl:text>
+                    <xsl:value-of select="$line_break"/>
+                </xsl:if>
+                <xsl:value-of select="$tab"/>
                 <xsl:text>"</xsl:text>
                 <xsl:value-of select="@original-name"/>
                 <xsl:text>" : {</xsl:text>
@@ -27,11 +31,6 @@
                 <xsl:value-of select="$line_break"/>
                 <xsl:value-of select="$tab"/>
                 <xsl:text>}</xsl:text>
-                <xsl:if test="position() != last()">
-                    <xsl:text>,</xsl:text>
-                    <xsl:value-of select="$line_break"/>
-                </xsl:if>
-                <xsl:value-of select="$tab"/>
             </xsl:if>
         </xsl:for-each>
     </xsl:template>
@@ -63,7 +62,7 @@
     <xsl:template name="ValueTemplate">
 
         <!-- Object type -->
-        <xsl:if test="o">
+        <xsl:if test="@cut">
             <xsl:text>{</xsl:text>
             <xsl:value-of select="$line_break"/>
             <xsl:variable name="base_name" select="@base"/>
@@ -82,7 +81,7 @@
         </xsl:if>
 
         <!-- Primitive types -->
-        <xsl:if test="not(o)">
+        <xsl:if test="not(@cut)">
             <xsl:if test="text()">
                 <xsl:choose>
                     <xsl:when test="@data = 'string'">"<xsl:value-of select="."/>"</xsl:when>
