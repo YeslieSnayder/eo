@@ -1,3 +1,0 @@
-{
-  "app" : {    "c" : "a",    "i" : 10,    "d" : 100.001,    "l" : 10000000000000,    "s" : "100000000000000000000000000000000000000000000",    "t" : true,    "f" : false,    "obj" : {      "a" : {},    "b" : {},    "s" : {},    "l" : "test",    "new" : "new attr",    "innerObj" : {      "text" : "some text",    "parentB" : {},    "innerInnerObj" : {      "x" : 10    }    }    }  },  "smclass" : {    "param" : {},    "q" : "abc",    "w" : 123,    "e" : 10.123  }
-}

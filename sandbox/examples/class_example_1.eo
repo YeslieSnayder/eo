@@ -1,0 +1,19 @@
++package sandbox
+
++alias stdout org.eolang.io.stdout
++alias sprintf org.eolang.txt.sprintf
+
+[] > app
+  [a] > innerClass
+    add. > b
+      a
+      20
+
+  10 > num
+  innerClass num > obj
+
+  stdout > @
+    sprintf
+      "My number : %d\nResult : %d\n"
+      obj.a
+      obj.b
