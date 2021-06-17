@@ -4,29 +4,9 @@
 +alias sprintf org.eolang.txt.sprintf
 
 [] > app
-  [a b] > innerClass
-    add. > first
-      a
-      b
-    [c] > innerInnerClass
-      mul. > second
-        c
-        ^.b
-  [] > someClass
-    [args...] > innerInnerClass
-      sub. > second
-        args.get 0
-        15
-  10 > num1
-  20 > num2
-  (innerClass num1 num2) > s
-  (s.innerInnerClass num1).second > inner1
-  (someClass.innerInnerClass num1).second > inner2
-  stdout > @
-    sprintf
-      "Numbers: %d, %d\nAddition: %d\nMultiplication: %d\nSubtraction (Wrong): %d\n"
-      num1
-      num2
-      s.first
-      inner1
-      inner2
+  *
+    "one"
+    "two"
+    "three"
+  .each > @
+    [i] (stdout i > @)
