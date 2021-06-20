@@ -10,7 +10,7 @@ function _object(instance) {    // Base object
 function sprintf() {
     let str = arguments[0].toString;
     for (let i = 1; i < arguments.length; i++) {
-        str = str.replace(/'(%d)|(%s)'/, arguments[i].toString);
+        str = str.replace(/%d|%s/, arguments[i].toString);
     }
     return _string(str);
 }
@@ -22,7 +22,7 @@ function stdout(str) {
 stdout.prototype = _object.prototype
 
 function _int(val) {
-    _memory(this, val)
+    _memory.call(this, val)
     this.val = val
     this.less = function (cmp) {
         return new _bool(this.val < cmp.val)
@@ -30,12 +30,13 @@ function _int(val) {
     this.add = function (num) {
         return new _int(this.val + num.val)
     }
+    this.toString = this.val.toString()
     return this
 }
 _int.prototype = _memory.prototype
 
 function _string(val) {
-    _object(this, function () {return val})
+    _object.call(this, function () {return val})
     this.val = val
     this.toString = this.val
     return this
@@ -43,13 +44,13 @@ function _string(val) {
 _string.prototype = _object.prototype
 
 function _bool(val) {
-    _object(this, function () {return val})
+    _object.call(this, function () {return val})
     this.val = val
     this.if = function (if_true, if_false) {
         return this.val ? if_true : if_false
     }
     this.while = function (action) {
-        return new _object(function () {
+        return new _object(new function () {
             while (this.val) {
                 action()
             }})
@@ -59,7 +60,7 @@ function _bool(val) {
 _bool.prototype = _object.prototype
 
 function _memory(val) {
-    _object(this, function () {return val})
+    _object.call(this, function () {return val})
     this.val = val
     this.write = function (newVal) {
         this.val = newVal.val
@@ -76,7 +77,7 @@ function _memory(val) {
 _memory.prototype = _object.prototype
 
 function _array(args) {
-    _object(this, function () {return args})
+    _object.call(this, function () {return args})
     this.val = args
     this.get = function (index) {
         return this.val[index.val]
@@ -86,10 +87,10 @@ function _array(args) {
 _array.prototype = _object.prototype
 
 function _seq(...args) {
-    _object(this, function () {
-        for (let func in args) {
-            if (typeof func._instance !== 'undefined')
-                func._instance()
+    _object.call(this, function () {
+        for (let i = 0; i < args.length; i++) {
+            if (typeof args[i]._instance !== 'undefined')
+                args[i]._instance()
         }
     })
     this.val = args
@@ -137,14 +138,17 @@ function derived_2() {
 derived_2.prototype = base.prototype
 
 function app(...args) {
-    this._obj = this
+    this._obj = this.prototype
     this.args = new _array(args)
     this.x = new _memory()
-    this.objs = new _array(new base(), new derived_1(), new derived_2())
+    this.objs = new _array([new base(), new derived_1(), new derived_2()])
     _seq.call(this,
         this.x.write(new _int(0)),
         this.x.less(new _int(3)).while(
-            function (i) {return app$3$1$α1(this._obj, i)}
+            function (i) {
+                // FIXME: Need to add parent instance (app)
+                return new app$3$1$α1(_parent, i)
+            }
         )
     )
     return this
@@ -163,11 +167,12 @@ function app$3$1$α1(parent, i) {
 }
 app$3$1$α1.prototype = _seq.prototype
 
+
+
 /*
 Calling functions
  */
-let _application = app()
-// FIXME: infinite recursion
+let _application = new app()
 while (typeof _application._instance !== 'undefined')
     _application = _application._instance
 _application()
