@@ -1,0 +1,22 @@
++package sandbox
+
++alias stdout org.eolang.io.stdout
+
+[numOfLegs canFly] > features
+
+[] > app
+  features > lion
+    []
+      4 > @
+    []
+      "It's a cat, cats cannot fly" > msg
+      false > @
+
+  lion > f
+
+  if. > @
+    f.canFly
+    stdout
+      "lion can fly"
+    stdout
+      f.canFly.msg

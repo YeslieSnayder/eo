@@ -1,0 +1,39 @@
++package sandbox
+
++alias stdout org.eolang.io.stdout
++alias sprintf org.eolang.txt.sprintf
+
+[] > base
+  [self] > get-word
+    "I'm base!\n" > @
+
+[] > derived-1
+  base > @
+  @ > p
+  [self] > get-word
+    (^.p.get-word) self > @
+
+[] > derived-2
+  base > @
+  [self] > get-word
+    "I'm derived!\n" > @
+
+[args...] > app
+  memory > x
+
+  * > objs
+    base
+    derived-1
+    derived-2
+
+  seq > @
+    x.write 0
+    while.
+      x.less 3
+      [i]
+        seq > @
+          stdout
+            sprintf
+              "%s"
+              ((^.objs).get (^.x)).get-word
+          (^.x).write ((^.x).add 1)

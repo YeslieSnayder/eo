@@ -1,7 +1,7 @@
 /**
-* Examples of functions that should be somewhere outside
-* and should be imported in this file
-*/
+ * Examples of functions that should be somewhere outside
+ * and should be imported in this file
+ */
 function _object(instance) {    // Base object
     this._instance = instance
     return this
@@ -27,6 +27,15 @@ function _int(val) {
     this.add = function (val) {
         return new _int(this.val + val.val)
     }
+    this.mul = function (val) {
+        return new _int(this.val * val.val)
+    }
+    this.sub = function (val) {
+        return new _int(this.val - val.val)
+    }
+    this.eq = function (val) {
+        return new _bool(this.val === val)
+    }
     this.toString = this.val.toString()
     return this
 }
@@ -40,28 +49,44 @@ function _string(val) {
 }
 _string.prototype = _object.prototype
 
+function _bool(val) {
+    _object.call(this, function () {return val})
+    this.val = val
+    this.if = function (if_true, if_false) {
+        return this.val ? if_true : if_false
+    }
+    this.while = function (action) {
+        return new _object(new function () {
+            while (this.val) {
+                action()
+            }})
+    }
+    return this
+}
+_bool.prototype = _object.prototype
+
 
 
 /**
  * The main object that a parser will create
  */
 function app() {
-    this.innerClass = function(a) {
-        this.a = a
-        this.b = this.a.add(new _int(20))
-        return this
-    }
-    this.num = new _int(10)
-    this.obj = new this.innerClass(this.num)
-    stdout.call(this,
-        sprintf(
-            new _string("My number : %d\nResult : %d\n"),
-            this.obj.a,
-            this.obj.b
-        ))
+    this.num = new _int(5)
+    obj.call(this, this.num)
     return this
 }
-app.prototype = stdout.prototype
+app.prototype = obj.prototype
+function obj(num) {
+    this.num = num
+    stdout.call(this,
+        sprintf(
+            new _string("Your Number: %d\n"),
+            this.num.eq(new _int(0)).if(new _int(0), new _int(1))
+        )
+    )
+    return this
+}
+obj.prototype = stdout.prototype
 
 
 
@@ -71,6 +96,5 @@ while (typeof _application._instance !== 'undefined')
 _application()
 
 /*  Result
-My number : 10
-Result : 30
+Your Number: 1
  */

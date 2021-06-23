@@ -1,0 +1,17 @@
++package sandbox
+
++alias stdout org.eolang.io.stdout
++alias sprintf org.eolang.txt.sprintf
+
+[] > app
+  5 > num
+  obj > @
+    num
+
+[num] > obj
+  stdout > @
+    sprintf
+      "Your Number: %d\n"
+      (num.eq 0).if
+        0
+        1
