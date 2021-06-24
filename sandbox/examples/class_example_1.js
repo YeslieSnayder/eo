@@ -47,17 +47,17 @@ _string.prototype = _object.prototype
  */
 function app() {
     this.innerClass = function(a) {
-        this.a = a
-        this.b = this.a.add(new _int(20))
+        this.a = function () {return a}
+        this.b = function () {return this.a().add(new _int(20))}
         return this
     }
-    this.num = new _int(10)
-    this.obj = new this.innerClass(this.num)
+    this.num = function () {return new _int(10)}
+    this.obj = function () {return new this.innerClass(this.num())}
     stdout.call(this,
         sprintf(
             new _string("My number : %d\nResult : %d\n"),
-            this.obj.a,
-            this.obj.b
+            this.obj().a(),
+            this.obj().b()
         ))
     return this
 }
