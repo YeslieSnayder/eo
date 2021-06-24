@@ -1,139 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-    <xsl:output method="text" indent="yes"/>
+<program ms="100"
+         name="app.eo"
+         time="2021-06-24T17:30:53.016790Z"
+         version="0.1.25">
+   <listing>+package sandbox
 
-    <!-- CONSTANT -->
-    <xsl:variable name="tab" select="'    '"/>
-    <xsl:variable name="line_break" select="'&#10;'"/>
++alias stdout org.eolang.io.stdout
++alias sprintf org.eolang.txt.sprintf
 
-    <xsl:template match="/">
-        <xsl:apply-templates select="program/objects"/>
-        <xsl:value-of select="$line_break"/>
-        <xsl:value-of select="$line_break"/>
-        <xsl:text>app()</xsl:text>
-    </xsl:template>
+[] &gt; log
+  [msg] &gt; print
+    stdout &gt; @
+      sprintf
+        "LOG: %s"
+        msg
 
-
-    <xsl:template name="object" match="program/objects">
-        <xsl:for-each select="o">
-            <xsl:if test="not(@ancestors)">
-                <xsl:if test="position() > 1">
-                    <xsl:value-of select="$line_break"/>
-                </xsl:if>
-                <xsl:text>function </xsl:text>
-                <xsl:value-of select="@original-name"/>
-                <xsl:text>() {</xsl:text>
-                <xsl:call-template name="attribute"/>
-                <xsl:value-of select="$line_break"/>
-                <xsl:text>}</xsl:text>
-            </xsl:if>
-        </xsl:for-each>
-    </xsl:template>
-
-
-    <xsl:template name="attribute">
-        <xsl:for-each select="o">
-            <xsl:if test="@name and not(@level)">
-                <xsl:value-of select="$line_break"/>
-                <xsl:value-of select="$tab"/>
-                <xsl:if test="parent::o[@ancestors]/@ancestors">
-                    <xsl:call-template name="tabulation">
-                        <xsl:with-param name="from" select="0" as="integer"/>
-                        <xsl:with-param name="to" select="parent::o[@ancestors]/@ancestors" as="integer"/>
-                    </xsl:call-template>
-                </xsl:if>
-                <xsl:call-template name="ValueTemplate"/>
-            </xsl:if>
-        </xsl:for-each>
-    </xsl:template>
-
-
-    <xsl:template name="ValueTemplate">
-
-        <!-- Object type -->
-        <xsl:if test="@cut">
-            <xsl:variable name="base_name" select="@base"/>
-            <xsl:text>function </xsl:text>
-            <xsl:value-of select="@name"/>
-            <xsl:text>(</xsl:text>
-            <xsl:for-each select="/program/objects/o[@name=$base_name]">
-                <!-- free attributes -->
-                <xsl:call-template name="class_parameters">
-                    <xsl:with-param name="base_name" select="$base_name"/>
-                </xsl:call-template>
-            </xsl:for-each>
-            <xsl:text>) {</xsl:text>
-            <xsl:for-each select="/program/objects/o[@name=$base_name]">
-                <xsl:call-template name="attribute"/>
-            </xsl:for-each>
-            <xsl:value-of select="$line_break"/>
-            <xsl:if test="/program/objects/o[@name=$base_name]/@ancestors">
-                <xsl:call-template name="tabulation">
-                    <xsl:with-param name="from" select="0" as="integer"/>
-                    <xsl:with-param name="to" select="/program/objects/o[@name=$base_name]/@ancestors" as="integer"/>
-                </xsl:call-template>
-            </xsl:if>
-            <xsl:text>}</xsl:text>
-        </xsl:if>
-
-        <!-- Primitive types and methods -->
-        <xsl:if test="not(@cut)">
-
-            <xsl:if test="@name!='@'">
-                <xsl:text>this.</xsl:text>
-                <xsl:value-of select="@name"/>
-                <xsl:text> = </xsl:text>
-            </xsl:if>
-
-            <xsl:if test="@ref">
-                <xsl:text>new </xsl:text>
-                <xsl:value-of select="@base"/>
-                <xsl:text>(</xsl:text>
-                <xsl:if test="text()">
-                    <xsl:call-template name="call_parameters"/>
-                </xsl:if>
-                <xsl:text>)</xsl:text>
-            </xsl:if>
-            <xsl:if test="text() and not(@ref)">
-                <xsl:choose>
-                    <xsl:when test="@data = 'string'">"<xsl:value-of select="."/>"</xsl:when>
-                    <xsl:when test="@base='org.eolang.io.stdout'">
-                        <xsl:text>stdout(</xsl:text>
-                        <xsl:call-template name="call_parameters"/>
-                        <xsl:text>)</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
-                </xsl:choose>
-            </xsl:if>
-            <xsl:if test="not(text()) and not(@ref)">
-                <xsl:value-of select="@name"/>
-            </xsl:if>
-        </xsl:if>
-    </xsl:template>
-
-
-    <xsl:template name="call_parameters">
-        <xsl:text>'Call parameters'</xsl:text>
-    </xsl:template>
-
-    <xsl:template name="class_parameters">
-        <xsl:param name="base_name"/>
-
-        <xsl:text>param = 'Class parameters for </xsl:text>
-        <xsl:value-of select="$base_name"/>
-        <xsl:text>'</xsl:text>
-    </xsl:template>
-
-    <xsl:template name="tabulation">
-        <xsl:param name="from"/>
-        <xsl:param name="to"/>
-
-        <xsl:if test="$from &lt; $to">
-            <xsl:value-of select="$tab"/>
-            <xsl:call-template name="tabulation">
-                <xsl:with-param name="from" select="$from + 1"/>
-                <xsl:with-param name="to" select="$to"/>
-            </xsl:call-template>
-        </xsl:if>
-    </xsl:template>
-</xsl:stylesheet>
+[] &gt; app
+  log.print &gt; @
+    "My message"
+&lt;EOF&gt;</listing>
+   <errors/>
+   <sheets>
+      <sheet>not-empty-atoms</sheet>
+      <sheet>middle-varargs</sheet>
+      <sheet>duplicate-names</sheet>
+      <sheet>many-free-attributes</sheet>
+      <sheet>broken-aliases</sheet>
+      <sheet>duplicate-aliases</sheet>
+      <sheet>one-body</sheet>
+      <sheet>same-line-names</sheet>
+      <sheet>self-naming</sheet>
+      <sheet>add-refs</sheet>
+      <sheet>wrap-method-calls</sheet>
+      <sheet>vars-float-up</sheet>
+      <sheet>add-refs</sheet>
+      <sheet>resolve-aliases</sheet>
+      <sheet>resolve-aliases</sheet>
+      <sheet>add-default-package</sheet>
+      <sheet>broken-refs</sheet>
+      <sheet>unknown-names</sheet>
+      <sheet>noname-attributes</sheet>
+      <sheet>duplicate-names</sheet>
+      <sheet>data-objects</sheet>
+      <sheet>globals-to-abstracts</sheet>
+      <sheet>remove-refs</sheet>
+      <sheet>abstracts-float-up</sheet>
+      <sheet>remove-levels</sheet>
+      <sheet>add-refs</sheet>
+      <sheet>fix-missed-names</sheet>
+      <sheet>broken-refs</sheet>
+   </sheets>
+   <metas>
+      <meta line="1">
+         <head>package</head>
+         <tail>sandbox</tail>
+         <part>sandbox</part>
+      </meta>
+      <meta line="3">
+         <head>alias</head>
+         <tail>stdout org.eolang.io.stdout</tail>
+         <part>stdout</part>
+         <part>org.eolang.io.stdout</part>
+      </meta>
+      <meta line="4">
+         <head>alias</head>
+         <tail>sprintf org.eolang.txt.sprintf</tail>
+         <part>sprintf</part>
+         <part>org.eolang.txt.sprintf</part>
+      </meta>
+   </metas>
+   <objects>
+      <o line="6" name="log" original-name="log">
+         <o base="log$print" cut="0" line="7" name="print" ref="7"/>
+      </o>
+      <o ancestors="1"
+         line="7"
+         name="log$print"
+         original-name="print"
+         parent="log">
+         <o line="7" name="msg"/>
+         <o base="org.eolang.io.stdout" line="8" name="@">
+            <o base="org.eolang.txt.sprintf" line="9">
+               <o base="org.eolang.string" data="string" line="10">LOG: %s</o>
+               <o base="msg" line="11" ref="7"/>
+            </o>
+         </o>
+      </o>
+      <o line="13" name="app" original-name="app">
+         <o base=".print" line="14" method="" name="@">
+            <o base="log" line="14" ref="6"/>
+            <o base="org.eolang.string" data="string" line="15">My message</o>
+         </o>
+      </o>
+   </objects>
+</program>
