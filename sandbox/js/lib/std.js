@@ -69,7 +69,7 @@ function _string(val) {
 }
 
 function _numericalVal(val) {
-    _object.call(this, val)
+    _object.call(this, function () {return val})
     this.val = val
     this.add = function (val) {
         return new _numericalVal(this.val + val.val)
@@ -122,7 +122,15 @@ function _numericalVal(val) {
         else if (this.val < 0) return new _numericalVal(-1)
         else return new _numericalVal(0)
     }
-    this.toString = this.val.toString()
+
+    this.write = function (val) {
+        this.val = val.val
+        return this
+    }
+    if (typeof(this.val) !== 'undefined')
+        this.toString = this.val.toString()
+    else
+        this.toString = ""
     return this
 }
 
@@ -135,10 +143,10 @@ function _bool(val) {
     }
 
     this.while = function (action) {
-        return new _object(new function () {
+        return new function () {
             while (val) {
                 action()
-            }})
+            }}
     }
 
     this.not = function () {
