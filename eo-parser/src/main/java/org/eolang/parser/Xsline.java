@@ -29,10 +29,15 @@ import com.jcabi.xml.XMLDocument;
 import com.jcabi.xml.XSL;
 import com.jcabi.xml.XSLDocument;
 import java.io.IOException;
+import java.util.AbstractMap;
+import java.util.Map;
+import org.cactoos.BiFunc;
 import org.cactoos.Output;
+import org.cactoos.func.UncheckedBiFunc;
 import org.cactoos.io.InputOf;
 import org.cactoos.io.ResourceOf;
 import org.cactoos.io.TeeInput;
+import org.cactoos.iterable.IterableOf;
 import org.cactoos.iterable.Joined;
 import org.cactoos.list.ListOf;
 import org.cactoos.list.Mapped;
@@ -61,7 +66,7 @@ public final class Xsline {
     /**
      * XSLs to use.
      */
-    private final Iterable<XSL> xsls;
+    private final Iterable<Map.Entry<XSL, BiFunc<XML, XML, Boolean>>> xsls;
 
     /**
      * The spy to use.
@@ -129,7 +134,8 @@ public final class Xsline {
      * @checkstyle ParameterNumberCheck (5 lines)
      */
     private Xsline(final XML dom, final Output tgt,
-        final Iterable<XSL> sheets, final Spy aspy) {
+        final Iterable<Map.Entry<XSL, BiFunc<XML, XML, Boolean>>> sheets,
+        final Spy aspy) {
         this.input = dom;
         this.target = tgt;
         this.xsls = sheets;
@@ -151,6 +157,50 @@ public final class Xsline {
     }
 
     /**
+     * Add this sheet to the list.
+     * @param sheet The sheet
+     * @return New object
+     * @since 0.1.27
+     */
+    @SuppressWarnings("unchecked")
+    public Xsline with(final XSL sheet) {
+        return new Xsline(
+            this.input, this.target,
+            new Joined<>(
+                this.xsls,
+                new IterableOf<Map.Entry<XSL, BiFunc<XML, XML, Boolean>>>(
+                    new AbstractMap.SimpleEntry<>(
+                        sheet,
+                        (before, after) -> false
+                    )
+                )
+            ),
+            this.spy
+        );
+    }
+
+    /**
+     * Add this sheet to the list.
+     * @param sheet The sheet
+     * @param func The func that returns TRUE if the XSL has to be applied again
+     * @return New object
+     * @since 0.1.28
+     */
+    @SuppressWarnings("unchecked")
+    public Xsline with(final XSL sheet, final BiFunc<XML, XML, Boolean> func) {
+        return new Xsline(
+            this.input, this.target,
+            new Joined<>(
+                this.xsls,
+                new IterableOf<Map.Entry<XSL, BiFunc<XML, XML, Boolean>>>(
+                    new AbstractMap.SimpleEntry<>(sheet, func)
+                )
+            ),
+            this.spy
+        );
+    }
+
+    /**
      * Compile it to XML and save to output.
      *
      * @throws IOException If fails
@@ -161,14 +211,21 @@ public final class Xsline {
         ).with(new ClasspathSources(Xsline.class));
         int index = 0;
         XML before = this.input;
-        for (final XSL xsl : this.xsls) {
+        for (final Map.Entry<XSL, BiFunc<XML, XML, Boolean>> pair : this.xsls) {
+            final XSL xsl = pair.getKey();
+            final UncheckedBiFunc<XML, XML, Boolean> func =
+                new UncheckedBiFunc<>(pair.getValue());
             final XML dom = new XMLDocument(xsl.toString());
-            final XML after = each.with("step", index)
-                .with("sheet", dom.xpath("/*/@id").get(0))
-                .transform(xsl.transform(before));
-            this.spy.push(index, xsl, after);
-            ++index;
-            before = after;
+            boolean more;
+            do {
+                final XML after = each.with("step", index)
+                    .with("sheet", dom.xpath("/*/@id").get(0))
+                    .transform(xsl.transform(before));
+                this.spy.push(index, xsl, after);
+                ++index;
+                more = func.apply(before, after);
+                before = after;
+            } while (more);
         }
         new Unchecked<>(
             new LengthOf(
@@ -185,13 +242,17 @@ public final class Xsline {
      * @param sheets Names
      * @return Objects
      */
-    private static Iterable<XSL> mapped(final Iterable<String> sheets) {
+    private static Iterable<Map.Entry<XSL, BiFunc<XML, XML, Boolean>>> mapped(
+        final Iterable<String> sheets) {
         return new Mapped<>(
-            doc -> new XSLDocument(
-                new TextOf(
-                    new ResourceOf(doc)
-                ).asString()
-            ).with(new ClasspathSources()),
+            name -> new AbstractMap.SimpleEntry<>(
+                new XSLDocument(
+                    new TextOf(
+                        new ResourceOf(name)
+                    ).asString()
+                ).with(new ClasspathSources()),
+                (before, after) -> false
+            ),
             sheets
         );
     }
