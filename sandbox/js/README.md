@@ -57,8 +57,7 @@ Where `'name_of_file'` is a name of current JS file (start point for a program)
 
 ```jsx
 function app() {
-    this.i = function() {
-return new _int(1)}
+    this.i = function() {return new _int(1)}
     this.f = function() {return new _float(1.1)}
     this.c = function() {return new _char('A')}
     this.str = function() {return new _string("String")}
