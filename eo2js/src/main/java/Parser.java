@@ -12,8 +12,8 @@ import java.nio.file.Path;
 
 public class Parser {
 
-    final static String XSL_PATH = "src/main/resources/xsl/eo2js_parser.xsl";
-    final static String LIB_PATH = "src/main/resources/lib/std.js";
+    final static String XSL_PATH = "eo2js/src/main/resources/xsl/eo2js_parser.xsl";
+    final static String LIB_PATH = "eo2js/src/main/resources/lib/std.js";
 
     public static void main(@NotNull String[] args) {
         if (args.length < 1) {
@@ -29,7 +29,7 @@ public class Parser {
             for (String path : args) {
                 int startIndex = Math.max(path.lastIndexOf('/'), 0);
                 int endIndex = Math.min(path.lastIndexOf(".eo.xml"), path.length());
-                final String OUTPUT_JS = "out/js/" + path.substring(startIndex, endIndex) + ".js";
+                final String OUTPUT_JS = "eo2js/out/js/" + path.substring(startIndex, endIndex) + ".js";
 
                 StreamSource xsl = new StreamSource(new File(XSL_PATH));
                 StreamSource in = new StreamSource(new File(path));
@@ -46,7 +46,7 @@ public class Parser {
 
     private static void createLib() {
         try {
-            final String ROOT = "out";
+            final String ROOT = "eo2js/out";
             final String LIB_LOCAL_PATH = ROOT + "/lib";
             final String JS_PATH = ROOT + "/js";
             Files.deleteIfExists(Path.of(LIB_LOCAL_PATH + "/std.js"));
