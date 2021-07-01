@@ -145,10 +145,17 @@ function app(...args) {
     _seq.call(this,
         this.x.write(new _int(0)),
         this.x.less(new _int(3)).while(
-            function (i) {
-                // FIXME: Need to add parent instance (app)
-                return new app$3$1$α1(_parent, i)
-            }
+            new function (parent, i) {
+                this.i = function () {return i}
+                _seq.call(this,
+                    new stdout(
+                        new sprintf(
+                            "%s",
+                            parent.objs.get(parent.x).get_word())),
+                    parent.x.write(parent.x.add(new _int(1)))
+                )
+                return this
+            }(this, 0)
         )
     )
     return this

@@ -7,7 +7,7 @@
     <xsl:variable name="line_break" select="'&#10;'"/>
 
     <xsl:template match="/">
-        <xsl:text>const {_seq, _bool, _char, _array, _error, _regex, stdout, _string, sprintf, _random, _numericalVal} = require('./lib/std')</xsl:text>
+        <xsl:text>const {_seq, _bool, _char, _array, _error, _regex, stdout, _string, sprintf, _random, _numericalVal} = require('../lib/std')</xsl:text>
         <xsl:value-of select="$line_break"/>
         <xsl:value-of select="$line_break"/>
         <xsl:for-each select="/program/objects/o">
@@ -91,10 +91,6 @@ _application()
         </xsl:if>
     </xsl:template>
 
-    <xsl:template name="anonymous_object">
-        <xsl:text>ANONYMOUS</xsl:text>
-    </xsl:template>
-
     <xsl:template name="attribute">
         <!-- Prototype -->
         <xsl:if test="@name='@'">
@@ -104,12 +100,7 @@ _application()
         <xsl:if test="@cut">
             <xsl:variable name="obj_name" select="@base"/>
             <xsl:for-each select="/program/objects/o[@name=$obj_name]">
-                <xsl:if test="@original-name">
-                    <xsl:call-template name="object"/>
-                </xsl:if>
-                <xsl:if test="not(@original-name)">
-                    <xsl:call-template name="anonymous_object"/>
-                </xsl:if>
+                <xsl:call-template name="object"/>
             </xsl:for-each>
         </xsl:if>
         <!-- Value -->
@@ -142,10 +133,10 @@ _application()
             </xsl:call-template>
         </xsl:if>
         <!-- User-defined or variable -->
-        <xsl:variable name="obj_name" select="@base"/>
-        <xsl:if test="@ref and (not(@cut) or /program/objects/o[@name=$obj_name and not(@original-name)])">
+        <xsl:if test="@ref and not(@cut)">
+            <xsl:variable name="obj_name" select="@base"/>
             <xsl:choose>
-                <xsl:when test="/program/objects/o[@name=$obj_name] and @original-name">
+                <xsl:when test="/program/objects/o[@name=$obj_name]">
                     <xsl:if test="$need_params">
                         <xsl:text>new </xsl:text>
                     </xsl:if>
@@ -155,9 +146,6 @@ _application()
                     <xsl:call-template name="name">
                         <xsl:with-param name="str" select="/program/objects/o[@name=$obj_name]/@original-name"/>
                     </xsl:call-template>
-                </xsl:when>
-                <xsl:when test="/program/objects/o[@name=$obj_name] and not(@original-name)">
-                    <xsl:call-template name="anonymous_object"/>
                 </xsl:when>
                 <xsl:when test="@base='@'">
                     <xsl:text>this</xsl:text>
@@ -246,7 +234,9 @@ _application()
                         <xsl:text>)</xsl:text>
                     </xsl:if>
                 </xsl:when>
-                <xsl:otherwise><xsl:value-of select="@base"/></xsl:otherwise>
+                <xsl:otherwise>
+                    <xsl:value-of select="@base"/>
+                </xsl:otherwise>
             </xsl:choose>
         </xsl:if>
     </xsl:template>
